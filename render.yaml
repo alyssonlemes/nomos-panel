@@ -1,0 +1,25 @@
+# Render Blueprint — Nomos Panel
+# Use a mesma connection string pooled do Neon da API.
+# O login é da equipe interna (PANEL_EMAIL / PANEL_PASSWORD), não de um escritório.
+
+services:
+  - type: web
+    name: nomos-panel
+    runtime: node
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: PANEL_EMAIL
+        sync: false
+      - key: PANEL_PASSWORD
+        sync: false
+      - key: PANEL_SECRET
+        generateValue: true
+      - key: APP_URL
+        sync: false

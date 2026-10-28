@@ -1,0 +1,138 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #1a1714;
+  --color-panel: #1a1714;
+  --color-paper: #f6f3ee;
+  --color-card: #ffffff;
+  --color-line: #e4ddd2;
+  --color-muted: #6b645c;
+  --color-brand: #8a6232;
+  --color-brand-strong: #6e4c24;
+  --color-danger: #9f1239;
+  --font-sans: var(--font-nomos-sans), "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  background-color: var(--color-paper);
+  background-image:
+    radial-gradient(ellipse 70% 45% at 100% -10%, rgb(138 98 50 / 0.08), transparent 55%),
+    radial-gradient(ellipse 50% 35% at 0% 100%, rgb(26 23 20 / 0.05), transparent 50%);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-brand);
+  color: #fff;
+}
+
+button:not(:disabled),
+[type="button"]:not(:disabled),
+[type="submit"]:not(:disabled),
+summary,
+label:has(input[type="radio"]),
+label:has(input[type="checkbox"]) {
+  cursor: pointer;
+}
+
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 3px rgb(138 98 50 / 0.18);
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.superficie {
+  background:
+    radial-gradient(120% 80% at 0% 0%, rgb(243 234 216 / 0.14), transparent 46%),
+    linear-gradient(165deg, #3a2a1c 0%, #1a1714 48%, #100e0c 100%);
+}
+
+.painel-conteudo h1 {
+  letter-spacing: -0.03em;
+  color: var(--color-ink);
+}
+
+.painel-conteudo .rounded-2xl.bg-card,
+.painel-conteudo article.rounded-2xl {
+  box-shadow:
+    0 1px 2px rgb(26 23 20 / 0.04),
+    0 16px 36px -24px rgb(26 23 20 / 0.45);
+}
+
+.painel-conteudo article.rounded-2xl {
+  border-top-width: 3px;
+  border-top-color: var(--color-brand);
+}
+
+.painel-conteudo thead {
+  background: #f3eee6;
+}
+
+.painel-conteudo thead th {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #5c534a;
+}
+
+.painel-conteudo tbody tr {
+  transition: background-color 150ms ease;
+}
+
+.painel-conteudo tbody tr:hover {
+  background-color: rgb(138 98 50 / 0.05);
+}
+
+button.bg-brand,
+a.bg-brand {
+  border-radius: 0.75rem;
+  box-shadow:
+    0 1px 1px rgb(26 23 20 / 0.16),
+    0 8px 16px -10px rgb(138 98 50 / 0.95);
+}
+
+.link-voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-line);
+  background: #fff;
+  padding: 0.35rem 0.75rem 0.35rem 0.55rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-muted);
+}
+
+.link-voltar:hover {
+  border-color: var(--color-brand);
+  color: var(--color-brand);
+}
