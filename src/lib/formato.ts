@@ -34,6 +34,7 @@ export function documento(valor: string | null | undefined) {
 const PAPEIS: Record<string, string> = {
   admin: "Administrador",
   owner: "Proprietário",
+  gestor: "Gestor",
   member: "Membro",
   viewer: "Visualizador",
   assistant: "Assistente",
