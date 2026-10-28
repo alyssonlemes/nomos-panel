@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { ErroBanco } from "@/components/erro-banco";
+import { ambiente } from "@/lib/ambiente";
 import { buscarEscritorio, membrosDoEscritorio, processosRecentes } from "@/lib/escritorios";
 import { dataCurta, documento, papel, quando } from "@/lib/formato";
 
@@ -30,6 +31,9 @@ export default async function EscritorioPage({ params }: { params: Promise<{ id:
           </span>
         </div>
         <p className="mt-2 text-sm text-muted">Aberto em {quando(escritorio.created_at)}.</p>
+        <a href={ambiente().appUrl} className="mt-4 inline-flex text-sm font-medium text-brand hover:text-brand-strong">
+          Abrir o sistema do escritório
+        </a>
 
         <section className="mt-6 grid gap-3 sm:grid-cols-3">
           <article className="rounded-2xl border border-line bg-card p-5">
