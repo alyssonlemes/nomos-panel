@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
 @theme {
-  --color-ink: #1a1714;
-  --color-panel: #1a1714;
-  --color-paper: #f6f3ee;
+  --color-ink: #171717;
+  --color-panel: #171717;
+  --color-paper: #f7f7f7;
   --color-card: #ffffff;
-  --color-line: #e4ddd2;
-  --color-muted: #6b645c;
-  --color-brand: #8a6232;
-  --color-brand-strong: #6e4c24;
+  --color-line: #e6e6e6;
+  --color-muted: #737373;
+  --color-brand: #171717;
+  --color-brand-strong: #2e2e2e;
   --color-danger: #9f1239;
   --font-sans: var(--font-nomos-sans), "Segoe UI", ui-sans-serif, system-ui, sans-serif;
 }
@@ -20,7 +20,7 @@ html {
 body {
   background-color: var(--color-paper);
   background-image:
-    radial-gradient(ellipse 70% 45% at 100% -10%, rgb(138 98 50 / 0.08), transparent 55%),
+    radial-gradient(ellipse 70% 45% at 100% -10%, rgb(23 23 23 / 0.06), transparent 55%),
     radial-gradient(ellipse 50% 35% at 0% 100%, rgb(26 23 20 / 0.05), transparent 50%);
   color: var(--color-ink);
   font-family: var(--font-sans);
@@ -28,7 +28,7 @@ body {
 }
 
 ::selection {
-  background: var(--color-brand);
+  background: var(--color-ink);
   color: #fff;
 }
 
@@ -53,7 +53,7 @@ select:focus,
 textarea:focus {
   outline: none;
   border-color: var(--color-brand);
-  box-shadow: 0 0 0 3px rgb(138 98 50 / 0.18);
+  box-shadow: 0 0 0 3px rgb(23 23 23 / 0.14);
 }
 
 button,
@@ -69,9 +69,7 @@ textarea {
 }
 
 .superficie {
-  background:
-    radial-gradient(120% 80% at 0% 0%, rgb(243 234 216 / 0.14), transparent 46%),
-    linear-gradient(165deg, #3a2a1c 0%, #1a1714 48%, #100e0c 100%);
+  background: var(--color-panel);
 }
 
 .painel-conteudo h1 {
@@ -92,7 +90,7 @@ textarea {
 }
 
 .painel-conteudo thead {
-  background: #f3eee6;
+  background: #f3f3f3;
 }
 
 .painel-conteudo thead th {
@@ -100,7 +98,7 @@ textarea {
   font-weight: 600;
   letter-spacing: 0.07em;
   text-transform: uppercase;
-  color: #5c534a;
+  color: #5c5c5c;
 }
 
 .painel-conteudo tbody tr {
@@ -108,7 +106,7 @@ textarea {
 }
 
 .painel-conteudo tbody tr:hover {
-  background-color: rgb(138 98 50 / 0.05);
+  background-color: rgb(23 23 23 / 0.04);
 }
 
 button.bg-brand,
@@ -116,7 +114,7 @@ a.bg-brand {
   border-radius: 0.75rem;
   box-shadow:
     0 1px 1px rgb(26 23 20 / 0.16),
-    0 8px 16px -10px rgb(138 98 50 / 0.95);
+    0 8px 16px -10px rgb(23 23 23 / 0.55);
 }
 
 .link-voltar {

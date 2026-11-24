@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 
+import { classeSituacao, textoSituacao, type SituacaoMensalidade } from "@/lib/mensalidade";
+
 export function Cabecalho({ grupo, titulo, texto }: { grupo: string; titulo: string; texto: string }) {
   return (
     <>
@@ -7,6 +9,13 @@ export function Cabecalho({ grupo, titulo, texto }: { grupo: string; titulo: str
       <h1 className="mt-1 text-3xl font-semibold">{titulo}</h1>
       <p className="mt-2 max-w-2xl text-sm text-muted">{texto}</p>
     </>
+  );
+}
+
+export function SeloMensalidade({ situacao }: { situacao: SituacaoMensalidade }) {
+  if (situacao === "sem_valor") return <span className="text-muted">—</span>;
+  return (
+    <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${classeSituacao(situacao)}`}>{textoSituacao(situacao)}</span>
   );
 }
 

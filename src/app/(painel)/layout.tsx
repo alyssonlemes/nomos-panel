@@ -13,9 +13,7 @@ export default async function PainelLayout({ children }: { children: React.React
       <aside className="superficie sticky top-0 z-30 flex flex-col text-white md:h-screen md:max-h-screen md:self-start">
         <div className="flex items-center justify-between gap-3 px-4 py-4 md:px-5 md:py-5">
           <div className="flex min-w-0 items-center gap-3">
-            <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/15">
-              <Marca clara className="size-8" />
-            </span>
+            <Marca clara className="size-11 shrink-0" />
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold tracking-tight">Nomos</p>
               <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-white/55">Painel interno</p>

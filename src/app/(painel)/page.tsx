@@ -1,9 +1,10 @@
 import Link from "next/link";
 
 import { ErroBanco } from "@/components/erro-banco";
-import { Cabecalho, SeloAtivo } from "@/components/listagem";
+import { Cabecalho, SeloAtivo, SeloMensalidade } from "@/components/listagem";
 import { dataCurta, documento } from "@/lib/formato";
 import { listarEscritorios } from "@/lib/escritorios";
+import { situacaoMensalidade } from "@/lib/mensalidade";
 import { resumoGeral } from "@/lib/resumo";
 
 export const metadata = { title: "Visão geral" };
@@ -22,6 +23,9 @@ function Cartao({ titulo, valor, detalhe }: { titulo: string; valor: string; det
 export default async function VisaoGeralPage() {
   try {
     const [resumo, escritorios] = await Promise.all([resumoGeral(), listarEscritorios()]);
+    const atrasadas = escritorios.filter(
+      (linha) => situacaoMensalidade(linha.mensalidade_centavos, linha.mensalidade_dia, linha.pago_em) === "atrasada",
+    ).length;
 
     return (
       <main>
@@ -32,7 +36,11 @@ export default async function VisaoGeralPage() {
         />
 
         <section className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          <Cartao titulo="Escritórios" valor={String(resumo.escritorios)} detalhe={`${resumo.escritoriosAtivos} ativos`} />
+          <Cartao
+            titulo="Escritórios"
+            valor={String(resumo.escritorios)}
+            detalhe={atrasadas > 0 ? `${resumo.escritoriosAtivos} ativos · ${atrasadas} em atraso` : `${resumo.escritoriosAtivos} ativos`}
+          />
           <Cartao titulo="Usuários" valor={String(resumo.usuarios)} detalhe={`${resumo.usuariosAtivos} ativos`} />
           <Cartao titulo="Clientes" valor={String(resumo.clientes)} detalhe="Em todos os escritórios" />
           <Cartao titulo="Processos" valor={String(resumo.processos)} detalhe={`${resumo.convitesPendentes} convites pendentes`} />
@@ -54,6 +62,7 @@ export default async function VisaoGeralPage() {
                   <tr>
                     <th className="px-5 py-3 font-medium">Escritório</th>
                     <th className="px-5 py-3 font-medium">Documento</th>
+                    <th className="px-5 py-3 font-medium">Mensalidade</th>
                     <th className="px-5 py-3 font-medium">Usuários</th>
                     <th className="px-5 py-3 font-medium">Clientes</th>
                     <th className="px-5 py-3 font-medium">Processos</th>
@@ -70,6 +79,9 @@ export default async function VisaoGeralPage() {
                         <SeloAtivo ativo={linha.is_active} empilhado />
                       </td>
                       <td className="px-5 py-3">{documento(linha.document)}</td>
+                      <td className="px-5 py-3">
+                        <SeloMensalidade situacao={situacaoMensalidade(linha.mensalidade_centavos, linha.mensalidade_dia, linha.pago_em)} />
+                      </td>
                       <td className="px-5 py-3 tabular-nums">{linha.usuarios}</td>
                       <td className="px-5 py-3 tabular-nums">{linha.clientes}</td>
                       <td className="px-5 py-3 tabular-nums">{linha.processos}</td>

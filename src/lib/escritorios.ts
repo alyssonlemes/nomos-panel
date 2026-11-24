@@ -12,6 +12,9 @@ export type EscritorioResumo = {
   clientes: number;
   processos: number;
   plano: string;
+  mensalidade_centavos: number | null;
+  mensalidade_dia: number | null;
+  pago_em: Date | null;
 };
 
 export async function listarEscritorios() {
@@ -27,9 +30,15 @@ export async function listarEscritorios() {
       (SELECT COUNT(*)::int FROM users u WHERE u.organization_id = o.id) AS usuarios,
       (SELECT COUNT(*)::int FROM clients c WHERE c.organization_id = o.id) AS clientes,
       (SELECT COUNT(*)::int FROM legal_actions la WHERE la.organization_id = o.id) AS processos,
-      o.plano
+      o.plano,
+      o.mensalidade_centavos,
+      o.mensalidade_dia,
+      mes.pago_em
     FROM organizations o
     JOIN users owner ON owner.id = o.owner_id
+    LEFT JOIN mensalidades mes
+      ON mes.organization_id = o.id
+     AND mes.competencia = date_trunc('month', timezone('America/Sao_Paulo', now()))::date
     ORDER BY o.created_at DESC
   `);
 }
@@ -48,6 +57,9 @@ export type EscritorioDetalhe = {
   clientes: number;
   processos: number;
   plano: string;
+  mensalidade_centavos: number | null;
+  mensalidade_dia: number | null;
+  pago_em: Date | null;
 };
 
 export async function buscarEscritorio(id: number) {
@@ -66,9 +78,15 @@ export async function buscarEscritorio(id: number) {
       (SELECT COUNT(*)::int FROM users u WHERE u.organization_id = o.id) AS usuarios,
       (SELECT COUNT(*)::int FROM clients c WHERE c.organization_id = o.id) AS clientes,
       (SELECT COUNT(*)::int FROM legal_actions la WHERE la.organization_id = o.id) AS processos,
-      o.plano
+      o.plano,
+      o.mensalidade_centavos,
+      o.mensalidade_dia,
+      mes.pago_em
     FROM organizations o
     JOIN users owner ON owner.id = o.owner_id
+    LEFT JOIN mensalidades mes
+      ON mes.organization_id = o.id
+     AND mes.competencia = date_trunc('month', timezone('America/Sao_Paulo', now()))::date
     WHERE o.id = $1
     `,
     [id],
@@ -103,6 +121,25 @@ export type ProcessoRecente = {
   title: string;
   created_at: Date;
 };
+
+export type PagamentoMensal = {
+  competencia: string;
+  valor_centavos: number;
+  pago_em: Date | null;
+};
+
+export async function pagamentosDoEscritorio(id: number) {
+  return consultar<PagamentoMensal>(
+    `
+    SELECT to_char(competencia, 'YYYY-MM-DD') AS competencia, valor_centavos, pago_em
+    FROM mensalidades
+    WHERE organization_id = $1
+    ORDER BY competencia DESC
+    LIMIT 12
+    `,
+    [id],
+  );
+}
 
 export async function processosRecentes(id: number) {
   return consultar<ProcessoRecente>(

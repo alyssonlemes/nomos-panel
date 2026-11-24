@@ -1,25 +1,38 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { definirPlano } from "@/app/(painel)/escritorios/acoes";
+import { definirMensalidade, definirPlano, desfazerPagamento, registrarPagamento } from "@/app/(painel)/escritorios/acoes";
 import { ErroBanco } from "@/components/erro-banco";
-import { SeloAtivo } from "@/components/listagem";
+import { SeloAtivo, SeloMensalidade } from "@/components/listagem";
 import { ambiente } from "@/lib/ambiente";
-import { buscarEscritorio, membrosDoEscritorio, processosRecentes } from "@/lib/escritorios";
+import { buscarEscritorio, membrosDoEscritorio, pagamentosDoEscritorio, processosRecentes } from "@/lib/escritorios";
 import { dataCurta, documento, papel, quando } from "@/lib/formato";
+import { centavosParaCampo, mesPorExtenso, reais, situacaoMensalidade } from "@/lib/mensalidade";
 import { PLANOS, planoPorCodigo } from "@/lib/planos";
 
 export const metadata = { title: "Escritório" };
 
-export default async function EscritorioPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function EscritorioPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ mensalidade?: string }>;
+}) {
   const { id } = await params;
+  const { mensalidade } = await searchParams;
   const numero = Number(id);
   if (!Number.isInteger(numero) || numero <= 0) notFound();
 
   try {
     const escritorio = await buscarEscritorio(numero);
     if (!escritorio) notFound();
-    const [membros, processos] = await Promise.all([membrosDoEscritorio(numero), processosRecentes(numero)]);
+    const [membros, processos, pagamentos] = await Promise.all([
+      membrosDoEscritorio(numero),
+      processosRecentes(numero),
+      pagamentosDoEscritorio(numero),
+    ]);
+    const situacao = situacaoMensalidade(escritorio.mensalidade_centavos, escritorio.mensalidade_dia, escritorio.pago_em);
 
     return (
       <main>
@@ -82,6 +95,83 @@ export default async function EscritorioPage({ params }: { params: Promise<{ id:
               Aplicar
             </button>
           </form>
+        </section>
+
+        <section className="mt-6 rounded-2xl border border-line bg-card p-5">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h2 className="font-semibold">Mensalidade</h2>
+              <p className="mt-1 max-w-xl text-sm text-muted">
+                Cobrança deste escritório. O cliente não vê este valor no sistema.
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="text-lg font-semibold tabular-nums">{reais(escritorio.mensalidade_centavos)}</p>
+              <div className="mt-1 flex justify-end">
+                <SeloMensalidade situacao={situacao} />
+              </div>
+            </div>
+          </div>
+
+          {mensalidade === "invalida" && (
+            <p className="mt-4 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2.5 text-sm text-danger">
+              Informe um valor em reais e um vencimento entre 1 e 28. Deixe o valor vazio para tirar a cobrança.
+            </p>
+          )}
+
+          <form action={definirMensalidade} className="mt-4 flex flex-wrap items-end gap-3">
+            <input type="hidden" name="id" value={escritorio.id} />
+            <label className="block text-sm">
+              <span className="text-xs uppercase tracking-[0.12em] text-muted">Valor mensal</span>
+              <input
+                name="valor"
+                inputMode="decimal"
+                defaultValue={centavosParaCampo(escritorio.mensalidade_centavos)}
+                placeholder="0,00"
+                className="mt-1 block w-36 rounded-xl border border-line bg-white px-3 py-2"
+              />
+            </label>
+            <label className="block text-sm">
+              <span className="text-xs uppercase tracking-[0.12em] text-muted">Vence no dia</span>
+              <input
+                name="dia"
+                type="number"
+                min={1}
+                max={28}
+                defaultValue={escritorio.mensalidade_dia ?? 10}
+                className="mt-1 block w-24 rounded-xl border border-line bg-white px-3 py-2"
+              />
+            </label>
+            <button type="submit" className="rounded-xl bg-brand px-4 py-2 text-sm font-medium text-white">
+              Salvar
+            </button>
+          </form>
+
+          {situacao !== "sem_valor" && (
+            <form action={situacao === "paga" ? desfazerPagamento : registrarPagamento} className="mt-4">
+              <input type="hidden" name="id" value={escritorio.id} />
+              <button type="submit" className="rounded-xl border border-line px-4 py-2 text-sm font-medium hover:border-brand">
+                {situacao === "paga" ? "Desfazer pagamento deste mês" : "Registrar pagamento deste mês"}
+              </button>
+            </form>
+          )}
+
+          <div className="mt-5 border-t border-line pt-4">
+            <h3 className="text-sm font-semibold">Pagamentos</h3>
+            {pagamentos.length === 0 ? (
+              <p className="mt-3 text-sm text-muted">Nenhum pagamento registrado.</p>
+            ) : (
+              <ul className="mt-3 divide-y divide-line text-sm">
+                {pagamentos.map((pagamento) => (
+                  <li key={pagamento.competencia} className="flex items-center justify-between gap-3 py-2.5">
+                    <span>{mesPorExtenso(pagamento.competencia)}</span>
+                    <span className="tabular-nums">{reais(pagamento.valor_centavos)}</span>
+                    <span className="text-muted">{pagamento.pago_em ? `Pago em ${dataCurta(pagamento.pago_em)}` : "Em aberto"}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </section>
 
         <section className="mt-6 grid gap-3 lg:grid-cols-2">
