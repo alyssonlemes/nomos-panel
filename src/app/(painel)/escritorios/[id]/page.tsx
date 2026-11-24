@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { definirPlano } from "@/app/(painel)/escritorios/acoes";
 import { ErroBanco } from "@/components/erro-banco";
 import { ambiente } from "@/lib/ambiente";
 import { buscarEscritorio, membrosDoEscritorio, processosRecentes } from "@/lib/escritorios";
 import { dataCurta, documento, papel, quando } from "@/lib/formato";
+import { PLANOS, planoPorCodigo } from "@/lib/planos";
 
 export const metadata = { title: "Escritório" };
 
@@ -38,7 +40,10 @@ export default async function EscritorioPage({ params }: { params: Promise<{ id:
         <section className="mt-6 grid gap-3 sm:grid-cols-3">
           <article className="rounded-2xl border border-line bg-card p-5">
             <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted">Usuários</p>
-            <p className="mt-3 text-2xl font-semibold tabular-nums">{escritorio.usuarios}</p>
+            <p className="mt-3 text-2xl font-semibold tabular-nums">
+              {escritorio.usuarios}
+              <span className="text-base font-medium text-muted"> / {planoPorCodigo(escritorio.plano).usuarios}</span>
+            </p>
           </article>
           <article className="rounded-2xl border border-line bg-card p-5">
             <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted">Clientes</p>
@@ -46,8 +51,38 @@ export default async function EscritorioPage({ params }: { params: Promise<{ id:
           </article>
           <article className="rounded-2xl border border-line bg-card p-5">
             <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted">Processos</p>
-            <p className="mt-3 text-2xl font-semibold tabular-nums">{escritorio.processos}</p>
+            <p className="mt-3 text-2xl font-semibold tabular-nums">
+              {escritorio.processos}
+              <span className="text-base font-medium text-muted"> / {planoPorCodigo(escritorio.plano).processos}</span>
+            </p>
           </article>
+        </section>
+
+        <section className="mt-6 rounded-2xl border border-line bg-card p-5">
+          <h2 className="font-semibold">Plano do escritório</h2>
+          <p className="mt-1 text-sm text-muted">
+            Esta escolha não aparece na landing. O cliente recebe o plano que você aplicar aqui.
+          </p>
+          <form action={definirPlano} className="mt-4 flex flex-wrap items-end gap-3">
+            <input type="hidden" name="id" value={escritorio.id} />
+            <label className="block text-sm">
+              <span className="text-xs uppercase tracking-[0.12em] text-muted">Plano</span>
+              <select
+                name="plano"
+                defaultValue={planoPorCodigo(escritorio.plano).codigo}
+                className="mt-1 block rounded-xl border border-line bg-background px-3 py-2"
+              >
+                {PLANOS.map((plano) => (
+                  <option key={plano.codigo} value={plano.codigo}>
+                    {plano.nome} — {plano.usuarios} usuários, {plano.processos} processos
+                  </option>
+                ))}
+              </select>
+            </label>
+            <button type="submit" className="rounded-xl bg-brand px-4 py-2 text-sm font-medium text-white">
+              Aplicar
+            </button>
+          </form>
         </section>
 
         <section className="mt-6 grid gap-3 lg:grid-cols-2">

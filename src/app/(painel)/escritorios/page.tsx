@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ErroBanco } from "@/components/erro-banco";
 import { dataCurta, documento } from "@/lib/formato";
 import { listarEscritorios } from "@/lib/escritorios";
+import { planoPorCodigo } from "@/lib/planos";
 
 export const metadata = { title: "Escritórios" };
 
@@ -29,6 +30,7 @@ export default async function EscritoriosPage() {
                     <th className="px-5 py-3 font-medium">Escritório</th>
                     <th className="px-5 py-3 font-medium">Documento</th>
                     <th className="px-5 py-3 font-medium">Responsável</th>
+                    <th className="px-5 py-3 font-medium">Plano</th>
                     <th className="px-5 py-3 font-medium">Usuários</th>
                     <th className="px-5 py-3 font-medium">Clientes</th>
                     <th className="px-5 py-3 font-medium">Processos</th>
@@ -51,6 +53,7 @@ export default async function EscritoriosPage() {
                         <span className="block">{linha.owner_name || "—"}</span>
                         <span className="text-xs text-muted">{linha.owner_email}</span>
                       </td>
+                      <td className="px-5 py-3">{planoPorCodigo(linha.plano).nome}</td>
                       <td className="px-5 py-3 tabular-nums">{linha.usuarios}</td>
                       <td className="px-5 py-3 tabular-nums">{linha.clientes}</td>
                       <td className="px-5 py-3 tabular-nums">{linha.processos}</td>

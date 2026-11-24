@@ -11,6 +11,7 @@ export type EscritorioResumo = {
   usuarios: number;
   clientes: number;
   processos: number;
+  plano: string;
 };
 
 export async function listarEscritorios() {
@@ -25,7 +26,8 @@ export async function listarEscritorios() {
       owner.email AS owner_email,
       (SELECT COUNT(*)::int FROM users u WHERE u.organization_id = o.id) AS usuarios,
       (SELECT COUNT(*)::int FROM clients c WHERE c.organization_id = o.id) AS clientes,
-      (SELECT COUNT(*)::int FROM legal_actions la WHERE la.organization_id = o.id) AS processos
+      (SELECT COUNT(*)::int FROM legal_actions la WHERE la.organization_id = o.id) AS processos,
+      o.plano
     FROM organizations o
     JOIN users owner ON owner.id = o.owner_id
     ORDER BY o.created_at DESC
@@ -45,6 +47,7 @@ export type EscritorioDetalhe = {
   usuarios: number;
   clientes: number;
   processos: number;
+  plano: string;
 };
 
 export async function buscarEscritorio(id: number) {
@@ -62,7 +65,8 @@ export async function buscarEscritorio(id: number) {
       owner.email AS owner_email,
       (SELECT COUNT(*)::int FROM users u WHERE u.organization_id = o.id) AS usuarios,
       (SELECT COUNT(*)::int FROM clients c WHERE c.organization_id = o.id) AS clientes,
-      (SELECT COUNT(*)::int FROM legal_actions la WHERE la.organization_id = o.id) AS processos
+      (SELECT COUNT(*)::int FROM legal_actions la WHERE la.organization_id = o.id) AS processos,
+      o.plano
     FROM organizations o
     JOIN users owner ON owner.id = o.owner_id
     WHERE o.id = $1
