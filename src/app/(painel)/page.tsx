@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { ErroBanco } from "@/components/erro-banco";
+import { Cabecalho, SeloAtivo } from "@/components/listagem";
 import { dataCurta, documento } from "@/lib/formato";
 import { listarEscritorios } from "@/lib/escritorios";
 import { resumoGeral } from "@/lib/resumo";
@@ -24,11 +25,11 @@ export default async function VisaoGeralPage() {
 
     return (
       <main>
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand">Operação</p>
-        <h1 className="mt-1 text-3xl font-semibold">Visão geral</h1>
-        <p className="mt-2 max-w-2xl text-sm text-muted">
-          Escritórios cadastrados no Nomos, com usuários, clientes e processos. A abertura de conta continua no sistema do escritório.
-        </p>
+        <Cabecalho
+          grupo="Operação"
+          titulo="Visão geral"
+          texto="Escritórios cadastrados no Nomos, com usuários, clientes e processos. A abertura de conta continua no sistema do escritório."
+        />
 
         <section className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <Cartao titulo="Escritórios" valor={String(resumo.escritorios)} detalhe={`${resumo.escritoriosAtivos} ativos`} />
@@ -66,9 +67,7 @@ export default async function VisaoGeralPage() {
                         <Link href={`/escritorios/${linha.id}`} className="font-medium hover:text-brand">
                           {linha.name}
                         </Link>
-                        <span className={`mt-1 flex w-fit rounded-full px-2 py-0.5 text-xs font-medium ${linha.is_active ? "bg-emerald-50 text-emerald-800" : "bg-rose-50 text-danger"}`}>
-                          {linha.is_active ? "Ativo" : "Inativo"}
-                        </span>
+                        <SeloAtivo ativo={linha.is_active} empilhado />
                       </td>
                       <td className="px-5 py-3">{documento(linha.document)}</td>
                       <td className="px-5 py-3 tabular-nums">{linha.usuarios}</td>

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import { definirPlano } from "@/app/(painel)/escritorios/acoes";
 import { ErroBanco } from "@/components/erro-banco";
+import { SeloAtivo } from "@/components/listagem";
 import { ambiente } from "@/lib/ambiente";
 import { buscarEscritorio, membrosDoEscritorio, processosRecentes } from "@/lib/escritorios";
 import { dataCurta, documento, papel, quando } from "@/lib/formato";
@@ -28,9 +29,7 @@ export default async function EscritorioPage({ params }: { params: Promise<{ id:
         <p className="mt-5 text-xs font-semibold uppercase tracking-[0.16em] text-brand">Escritório</p>
         <div className="mt-1 flex flex-wrap items-center gap-3">
           <h1 className="text-3xl font-semibold">{escritorio.name}</h1>
-          <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${escritorio.is_active ? "bg-emerald-50 text-emerald-800" : "bg-rose-50 text-danger"}`}>
-            {escritorio.is_active ? "Ativo" : "Inativo"}
-          </span>
+          <SeloAtivo ativo={escritorio.is_active} junto />
         </div>
         <p className="mt-2 text-sm text-muted">Aberto em {quando(escritorio.created_at)}.</p>
         <a href={ambiente().appUrl} className="mt-4 inline-flex text-sm font-medium text-brand hover:text-brand-strong">
