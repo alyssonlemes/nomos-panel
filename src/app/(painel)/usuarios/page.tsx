@@ -1,3 +1,6 @@
+import Link from "next/link";
+
+import { ExcluirUsuario } from "@/app/(painel)/usuarios/excluir";
 import { ErroBanco } from "@/components/erro-banco";
 import { Cabecalho, SeloAtivo, Tabela } from "@/components/listagem";
 import { dataCurta, papel } from "@/lib/formato";
@@ -17,7 +20,7 @@ export default async function UsuariosPage() {
           texto="Contas do Nomos, com ou sem escritório. Quem ainda não criou organização aparece sem vínculo."
         />
         <Tabela
-          colunas={["Nome", "E-mail", "Escritório", "Papel", "Situação", "Desde"]}
+          colunas={["Nome", "E-mail", "Escritório", "Papel", "Situação", "Desde", "Ações"]}
           vazio="Nenhum usuário cadastrado."
           temLinhas={usuarios.length > 0}
         >
@@ -36,6 +39,14 @@ export default async function UsuariosPage() {
                 <SeloAtivo ativo={usuario.is_active} />
               </td>
               <td className="px-5 py-3">{dataCurta(usuario.created_at)}</td>
+              <td className="px-5 py-3">
+                <div className="flex items-center gap-3">
+                  <Link href={`/usuarios/${usuario.id}`} className="font-medium text-brand hover:text-brand-strong">
+                    Editar
+                  </Link>
+                  <ExcluirUsuario id={usuario.id} nome={usuario.full_name || usuario.email} />
+                </div>
+              </td>
             </tr>
           ))}
         </Tabela>
