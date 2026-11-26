@@ -73,7 +73,7 @@ export default async function EscritorioPage({
         <section className="mt-6 rounded-2xl border border-line bg-card p-5">
           <h2 className="font-semibold">Plano do escritório</h2>
           <p className="mt-1 text-sm text-muted">
-            Esta escolha não aparece na landing. O cliente recebe o plano que você aplicar aqui.
+            Aplicar grava o plano e a mensalidade deste valor. O dia de vencimento que já existe permanece. O cliente não vê o preço no sistema.
           </p>
           <form action={definirPlano} className="mt-4 flex flex-wrap items-end gap-3">
             <input type="hidden" name="id" value={escritorio.id} />
@@ -86,7 +86,7 @@ export default async function EscritorioPage({
               >
                 {PLANOS.map((plano) => (
                   <option key={plano.codigo} value={plano.codigo}>
-                    {plano.nome} — {plano.usuarios} usuários, {plano.processos} processos
+                    {plano.nome} — {reais(plano.precoCentavos)} — {plano.usuarios} usuários, {plano.processos} processos
                   </option>
                 ))}
               </select>

@@ -4,22 +4,26 @@ import { redirect } from "next/navigation";
 
 import { consultar } from "@/lib/db";
 import { centavosDe, competenciaAtual } from "@/lib/mensalidade";
-import { PLANOS, type CodigoPlano } from "@/lib/planos";
+import { PLANOS } from "@/lib/planos";
 import { exigirSessao } from "@/lib/sessao";
-
-const CODIGOS = new Set<string>(PLANOS.map((item) => item.codigo));
 
 export async function definirPlano(formData: FormData) {
   await exigirSessao();
   const id = Number(formData.get("id"));
-  const plano = String(formData.get("plano") ?? "");
-  if (!Number.isInteger(id) || id <= 0 || !CODIGOS.has(plano)) {
+  const codigo = String(formData.get("plano") ?? "");
+  const plano = PLANOS.find((item) => item.codigo === codigo);
+  if (!Number.isInteger(id) || id <= 0 || !plano) {
     redirect("/escritorios");
   }
 
   await consultar(
-    `UPDATE organizations SET plano = $1, updated_at = NOW() WHERE id = $2`,
-    [plano as CodigoPlano, id],
+    `UPDATE organizations
+     SET plano = $1,
+         mensalidade_centavos = $2,
+         mensalidade_dia = COALESCE(mensalidade_dia, 10),
+         updated_at = NOW()
+     WHERE id = $3`,
+    [plano.codigo, plano.precoCentavos, id],
   );
   redirect(`/escritorios/${id}`);
 }
